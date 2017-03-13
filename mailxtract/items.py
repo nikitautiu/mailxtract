@@ -8,7 +8,9 @@
 import scrapy
 
 
-class MailxtractItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class EmailItem(scrapy.Item):
+    """The scrapy item that holds teh start url, the emails and url of the
+    page the emails were extracted from."""
+    start_url = scrapy.Field()
+    url = scrapy.Field()
+    emails = scrapy.Field()
