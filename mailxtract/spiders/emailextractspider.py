@@ -11,6 +11,7 @@ from scrapy_splash import SplashRequest
 
 from items import EmailItem
 
+
 # the default email pattern
 EMAIL_PATTERN = r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+[a-zA-Z0-9]"
 
@@ -33,6 +34,8 @@ class EmailExtractSpider(scrapy.Spider):
         Initializes the spider based on the given kwargs
         :param follow_frames: Whether to follow frame links(`False` by default)
         :param traverse_domains: Whether to cross domains(`False` by default)
+        :param email_pattern: The pattern to match emails by
+        :param splash_requests: Whether to proxy the requests to splash(`False` by default)
         """
         super(EmailExtractSpider, self).__init__(*args, **kwargs)
         # keep the first url, this ensure that we know where we
@@ -108,14 +111,14 @@ class EmailExtractSpider(scrapy.Spider):
         return req
 
     def parse(self, response):
-        """Parse the response, follow the links, return emails if appropriate."""
+        """Parse the response, follow the links,
+        return an item with emails if appropriate."""
         # get the first url
         # if it is not set set it to the current one.
         # otherwise, if recursing, propagate it via the meta
         start_url = response.meta.get('start_url', response.url)
         link_lists = [link_extractor.extract_links(response) for link_extractor
-                      in
-                      self.link_extractors]
+                      in self.link_extractors]
 
         for link in itertools.chain.from_iterable(link_lists):
             # builds the request(either static or splash)
